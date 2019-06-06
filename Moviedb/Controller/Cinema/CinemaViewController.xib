@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CinemaViewController" customModule="Moviedb" customModuleProvider="target">
+            <connections>
+                <outlet property="btnSelectCity" destination="BDf-WB-NjP" id="tKe-4R-4Lt"/>
+                <outlet property="imgDropArrow" destination="I1i-xK-lFF" id="yQi-2z-wwU"/>
+                <outlet property="lbNoResultsFound" destination="rli-Re-gU9" id="yD6-Db-0ET"/>
+                <outlet property="tableViewCinema" destination="mx9-Qj-lCZ" id="i57-bM-cog"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+                <outletCollection property="btnCity" destination="zaB-Xl-DXL" collectionClass="NSMutableArray" id="UaP-c4-SMz"/>
+                <outletCollection property="btnCity" destination="QPY-4b-OKN" collectionClass="NSMutableArray" id="NfO-bv-cYY"/>
+                <outletCollection property="btnCity" destination="ko5-Ze-Jmh" collectionClass="NSMutableArray" id="0eh-um-zsl"/>
+                <outletCollection property="btnCity" destination="D1f-aJ-uKV" collectionClass="NSMutableArray" id="Mgv-qn-zjX"/>
+                <outletCollection property="btnCity" destination="6BL-4t-fs6" collectionClass="NSMutableArray" id="hmu-6F-Uz3"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="mx9-Qj-lCZ">
+                    <rect key="frame" x="0.0" y="89" width="414" height="773"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </tableView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="dropArrow" translatesAutoresizingMaskIntoConstraints="NO" id="I1i-xK-lFF">
+                    <rect key="frame" x="258" y="57" width="16" height="16"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="16" id="kDV-iC-Jco"/>
+                        <constraint firstAttribute="height" constant="16" id="pUo-dQ-vbZ"/>
+                    </constraints>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pVo-fc-k6e">
+                    <rect key="frame" x="206.5" y="113" width="1" height="1"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="5kK-dt-TXi"/>
+                        <constraint firstAttribute="width" constant="1" id="Me3-ss-mlE"/>
+                    </constraints>
+                </view>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="3so-uj-Bua">
+                    <rect key="frame" x="0.0" y="44" width="414" height="245"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BDf-WB-NjP">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="45"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="45" id="1Bl-0G-PZD"/>
+                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="XV9-An-LLo"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                            <state key="normal" title="Select A City">
+                                <color key="titleColor" red="1" green="0.5231628264" blue="0.1027967904" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="btnSelectCityTapped:" destination="-1" eventType="touchUpInside" id="KgJ-5K-IQq"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zaB-Xl-DXL">
+                            <rect key="frame" x="0.0" y="45" width="414" height="40"/>
+                            <color key="backgroundColor" red="0.61514810139999998" green="1" blue="0.53194897480000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="oR6-LY-oaE"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                            <state key="normal" title="Hồ Chí Minh">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </state>
+                            <connections>
+                                <action selector="cityTapped:" destination="-1" eventType="touchUpInside" id="xjw-Gz-c9b"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QPY-4b-OKN">
+                            <rect key="frame" x="0.0" y="85" width="414" height="40"/>
+                            <color key="backgroundColor" red="0.61514810139999998" green="1" blue="0.53194897480000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="Swt-Xk-C5g"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                            <state key="normal" title="Hà Nội">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </state>
+                            <connections>
+                                <action selector="cityTapped:" destination="-1" eventType="touchUpInside" id="0w2-g1-zSt"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ko5-Ze-Jmh">
+                            <rect key="frame" x="0.0" y="125" width="414" height="40"/>
+                            <color key="backgroundColor" red="0.61514810139999998" green="1" blue="0.53194897480000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="Uhj-Fm-wt1"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                            <state key="normal" title="Đà Nẵng">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </state>
+                            <connections>
+                                <action selector="cityTapped:" destination="-1" eventType="touchUpInside" id="qit-cy-lsx"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D1f-aJ-uKV">
+                            <rect key="frame" x="0.0" y="165" width="414" height="40"/>
+                            <color key="backgroundColor" red="0.61514810139999998" green="1" blue="0.53194897480000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="C5y-za-EbH"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                            <state key="normal" title="Cần Thơ">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </state>
+                            <connections>
+                                <action selector="cityTapped:" destination="-1" eventType="touchUpInside" id="sFP-9L-7Mp"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6BL-4t-fs6">
+                            <rect key="frame" x="0.0" y="205" width="414" height="40"/>
+                            <color key="backgroundColor" red="0.61514810139999998" green="1" blue="0.53194897480000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="0Fn-D9-1mZ"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                            <state key="normal" title="Đồng Nai">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </state>
+                            <connections>
+                                <action selector="cityTapped:" destination="-1" eventType="touchUpInside" id="Hsf-6L-pOI"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                </stackView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No results found" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rli-Re-gU9">
+                    <rect key="frame" x="143.5" y="465" width="127" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="gzk-3I-1Td"/>
+                        <constraint firstAttribute="width" constant="127" id="l54-Di-1nV"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="3so-uj-Bua" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="0GR-0E-4rH"/>
+                <constraint firstItem="mx9-Qj-lCZ" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="2Ix-Kt-EOL"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="mx9-Qj-lCZ" secondAttribute="trailing" id="5MH-nZ-aNY"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="mx9-Qj-lCZ" secondAttribute="bottom" id="72T-of-Hpu"/>
+                <constraint firstItem="rli-Re-gU9" firstAttribute="centerY" secondItem="mx9-Qj-lCZ" secondAttribute="centerY" id="8ET-0e-XbB"/>
+                <constraint firstItem="3so-uj-Bua" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="GXr-2T-hK3"/>
+                <constraint firstItem="I1i-xK-lFF" firstAttribute="leading" secondItem="pVo-fc-k6e" secondAttribute="trailing" constant="50.5" id="LgW-uN-1Dz"/>
+                <constraint firstItem="pVo-fc-k6e" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="NPb-ax-6NV"/>
+                <constraint firstItem="mx9-Qj-lCZ" firstAttribute="top" secondItem="BDf-WB-NjP" secondAttribute="bottom" id="Otz-AN-vIE"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="3so-uj-Bua" secondAttribute="trailing" id="Z1X-7Z-JjT"/>
+                <constraint firstItem="pVo-fc-k6e" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="69" id="bQp-8E-yHO"/>
+                <constraint firstItem="I1i-xK-lFF" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="13" id="hXK-eM-4uA"/>
+                <constraint firstItem="rli-Re-gU9" firstAttribute="centerX" secondItem="mx9-Qj-lCZ" secondAttribute="centerX" id="rhE-jH-XTi"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="131.8840579710145" y="153.34821428571428"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="dropArrow" width="8.6666669845581055" height="8.6666669845581055"/>
+    </resources>
+</document>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ButtonSeeAll" customModule="Moviedb" customModuleProvider="target">
+            <connections>
+                <outlet property="imgButton" destination="ZCU-C1-eey" id="Jl7-gm-Mk0"/>
+                <outlet property="lbButton" destination="tpw-rH-gq5" id="1DS-sS-zY3"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="52" height="25"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="See all" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tpw-rH-gq5">
+                    <rect key="frame" x="0.0" y="5" width="39" height="25"/>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
+                    <color key="textColor" red="1" green="0.5231628264" blue="0.1027967904" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rightHeader" translatesAutoresizingMaskIntoConstraints="NO" id="ZCU-C1-eey">
+                    <rect key="frame" x="42" y="11.5" width="12" height="12"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="12" id="2Q0-nr-c6R"/>
+                        <constraint firstAttribute="height" constant="12" id="JGa-J1-QAj"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="tpw-rH-gq5" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="9FM-Y2-j5t"/>
+                <constraint firstItem="tpw-rH-gq5" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="I4j-yB-fYY"/>
+                <constraint firstItem="ZCU-C1-eey" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" constant="2" id="ata-d0-Xc0"/>
+                <constraint firstItem="ZCU-C1-eey" firstAttribute="centerY" secondItem="tpw-rH-gq5" secondAttribute="centerY" id="hJd-sR-hkK"/>
+                <constraint firstItem="tpw-rH-gq5" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="rFC-HQ-fj1"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="-244.92753623188409" y="176.45089285714286"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="rightHeader" width="16" height="16"/>
+    </resources>
+</document>

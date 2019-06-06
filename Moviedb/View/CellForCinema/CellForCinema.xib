@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellForCinema" rowHeight="150" id="KGk-i7-Jjw" customClass="CellForCinema" customModule="Moviedb" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="385" height="150"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="385" height="149.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LOTTE CINEMA NAM SÀI GÒN" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c6K-JQ-D0D">
+                        <rect key="frame" x="123" y="8" width="252" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="17" id="EPh-P9-L90"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time: 8 AM - 10 PM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9HH-tB-LxG">
+                        <rect key="frame" x="123" y="29" width="248" height="15"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Phone : 0981775202" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rvL-ve-kMM">
+                        <rect key="frame" x="123" y="48" width="248" height="15"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yEX-Hh-Xq2" customClass="CosmosView" customModule="Cosmos">
+                        <rect key="frame" x="122" y="67" width="106" height="14"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="JlH-JN-oQJ"/>
+                            <constraint firstAttribute="width" constant="106" id="mxE-yn-tyH"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="color" keyPath="filledColor">
+                                <color key="value" red="1" green="0.5231628264" blue="0.1027967904" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="filledBorderColor">
+                                <color key="value" red="1" green="0.5231628264" blue="0.1027967904" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="updateOnTouch" value="NO"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="starMargin">
+                                <real key="value" value="0.0"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tầng 3 Lotte Mart phường Tân Quy, Quận 7 " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qh7-ub-3Qy">
+                        <rect key="frame" x="123" y="85" width="248" height="14.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="location" translatesAutoresizingMaskIntoConstraints="NO" id="mcm-eI-J6P">
+                        <rect key="frame" x="123" y="108" width="24" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="4Td-FA-zR9"/>
+                            <constraint firstAttribute="height" constant="20" id="RPy-hz-Qie"/>
+                        </constraints>
+                    </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wxX-lk-Enn">
+                        <rect key="frame" x="149" y="103.5" width="134" height="29"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="134" id="Jf4-Hs-GY0"/>
+                            <constraint firstAttribute="height" constant="29" id="fpg-y0-6Iq"/>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="29" id="hRQ-HP-PSr"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
+                        <state key="normal" title="Guide Road to Cinema">
+                            <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </state>
+                        <connections>
+                            <action selector="guideRoadTapped" destination="KGk-i7-Jjw" eventType="touchUpInside" id="jue-4g-4dW"/>
+                        </connections>
+                    </button>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cinemaImage" translatesAutoresizingMaskIntoConstraints="NO" id="Rcm-vo-vf5">
+                        <rect key="frame" x="9" y="25" width="100" height="100"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="100" id="Ep3-Rt-Uz1"/>
+                            <constraint firstAttribute="width" constant="100" id="eQh-Fk-eFU"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="rvL-ve-kMM" firstAttribute="leading" secondItem="Rcm-vo-vf5" secondAttribute="trailing" constant="14" id="15c-8Q-wVr"/>
+                    <constraint firstItem="qh7-ub-3Qy" firstAttribute="top" secondItem="yEX-Hh-Xq2" secondAttribute="bottom" constant="4" id="34G-ds-zxZ"/>
+                    <constraint firstItem="wxX-lk-Enn" firstAttribute="leading" secondItem="mcm-eI-J6P" secondAttribute="trailing" constant="2" id="5uq-m2-jNI"/>
+                    <constraint firstItem="9HH-tB-LxG" firstAttribute="leading" secondItem="Rcm-vo-vf5" secondAttribute="trailing" constant="14" id="7o5-Gl-41m"/>
+                    <constraint firstAttribute="trailing" secondItem="c6K-JQ-D0D" secondAttribute="trailing" constant="10" id="Apw-a2-zZw"/>
+                    <constraint firstItem="Rcm-vo-vf5" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="9" id="Fjq-qb-86X"/>
+                    <constraint firstItem="yEX-Hh-Xq2" firstAttribute="leading" secondItem="Rcm-vo-vf5" secondAttribute="trailing" constant="13" id="K1l-iC-Ddu"/>
+                    <constraint firstItem="wxX-lk-Enn" firstAttribute="centerY" secondItem="mcm-eI-J6P" secondAttribute="centerY" id="KDu-dc-Mln"/>
+                    <constraint firstItem="mcm-eI-J6P" firstAttribute="leading" secondItem="Rcm-vo-vf5" secondAttribute="trailing" constant="14" id="Sh2-y6-uDD"/>
+                    <constraint firstItem="yEX-Hh-Xq2" firstAttribute="top" secondItem="rvL-ve-kMM" secondAttribute="bottom" constant="4" id="US7-GW-Pb5"/>
+                    <constraint firstItem="c6K-JQ-D0D" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="YEs-VV-VZP"/>
+                    <constraint firstItem="rvL-ve-kMM" firstAttribute="top" secondItem="9HH-tB-LxG" secondAttribute="bottom" constant="4" id="YkK-9E-DaJ"/>
+                    <constraint firstAttribute="trailing" secondItem="qh7-ub-3Qy" secondAttribute="trailing" constant="14" id="Zdb-gD-Fsu"/>
+                    <constraint firstAttribute="trailing" secondItem="rvL-ve-kMM" secondAttribute="trailing" constant="14" id="gYd-1x-i0c"/>
+                    <constraint firstAttribute="trailing" secondItem="9HH-tB-LxG" secondAttribute="trailing" constant="14" id="hIk-pJ-VZZ"/>
+                    <constraint firstAttribute="trailing" secondItem="c6K-JQ-D0D" secondAttribute="trailing" constant="10" id="keB-b3-34C"/>
+                    <constraint firstItem="9HH-tB-LxG" firstAttribute="top" secondItem="c6K-JQ-D0D" secondAttribute="bottom" constant="4" id="nCR-hE-ABn"/>
+                    <constraint firstItem="qh7-ub-3Qy" firstAttribute="leading" secondItem="Rcm-vo-vf5" secondAttribute="trailing" constant="14" id="rHK-gF-h0g"/>
+                    <constraint firstItem="Rcm-vo-vf5" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="rnX-16-eZH"/>
+                    <constraint firstItem="mcm-eI-J6P" firstAttribute="top" secondItem="qh7-ub-3Qy" secondAttribute="bottom" constant="8.5" id="x6A-KG-M4V"/>
+                    <constraint firstItem="c6K-JQ-D0D" firstAttribute="leading" secondItem="Rcm-vo-vf5" secondAttribute="trailing" constant="14" id="zkH-3C-XzV"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="btnGuideRoad" destination="wxX-lk-Enn" id="j9t-ge-t8Q"/>
+                <outlet property="imgCinema" destination="Rcm-vo-vf5" id="zST-sI-ULv"/>
+                <outlet property="lbAddress" destination="qh7-ub-3Qy" id="iWV-em-SqK"/>
+                <outlet property="lbName" destination="c6K-JQ-D0D" id="UX4-ZX-W7q"/>
+                <outlet property="lbPhone" destination="rvL-ve-kMM" id="pY2-pW-3Wa"/>
+                <outlet property="lbTime" destination="9HH-tB-LxG" id="wWb-Td-Jyq"/>
+                <outlet property="starRate" destination="yEX-Hh-Xq2" id="a0f-yk-a05"/>
+            </connections>
+            <point key="canvasLocation" x="31.159420289855074" y="127.90178571428571"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="cinemaImage" width="283" height="178"/>
+        <image name="location" width="13.333333015441895" height="13.333333015441895"/>
+    </resources>
+</document>
