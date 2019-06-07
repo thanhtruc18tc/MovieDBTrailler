@@ -31,15 +31,19 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
     
     var listCinema : [CinemaEntity] = []
     var currentCity = "sg"
+    let loadingView: NVActivityIndicatorView = {
+        let type: NVActivityIndicatorType = .circleStrokeSpin
+        let color = UIColor.white
+        let padding: CGFloat = 30
+        let frame = CGRect(x: UIScreen.main.bounds.width/2 - 10, y: UIScreen.main.bounds.height/2 - 10, width: 20, height: 20)
+        let animation = NVActivityIndicatorView(frame: frame, type: type, color: color, padding: padding)
+        return animation
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.followX.constant = self.view.frame.width/2 + follow.frame.width/2
-//        self.view.layoutIfNeeded()
-//        
-//        self.followX.constant = 0
+        view.addSubview(loadingView)
         self.btnCity.forEach { (button) in
-//            button.translatesAutoresizingMaskIntoConstraints = false
             button.isHidden = true
             button.backgroundColor = Color.backgroundColor
             
@@ -53,7 +57,6 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         hideButtonCitys()
         setUpTableView()
 
-        //        AIzaSyBvrL-a-BfYONkzLV9KmlzNaEcp2bc0iC4
         
     }
     
@@ -61,23 +64,11 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         tableViewCinema.isHidden = true
         lbNoResultsFound.isHidden = false
     }
-    func loadingView(){
-        let size = CGSize(width: 10 , height: 10)
-        let font = UIFont(name: "System", size: 12)
-        //start
-        startAnimating(size, message: "Loading", messageFont: font, type: .ballPulse, color: .white, padding: 20, displayTimeThreshold: 2, minimumDisplayTime: 2, backgroundColor: Color.backgroundColor, textColor: .white, fadeInAnimation: nil)
-        //stop
-        _ = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(stopLoading), userInfo: nil, repeats: false)
-    }
-    @objc func stopLoading(){
-        stopAnimating()
-    }
     
     func setUpTableView(){
         // register nib
         let nib = UINib(nibName: "CellForCinema", bundle: nil)
         tableViewCinema.register(nib, forCellReuseIdentifier: "cellForCinema")
-        
         tableViewCinema.delegate = self
         tableViewCinema.dataSource = self
         tableViewCinema.tintColor = Color.backgroundColor
@@ -101,7 +92,7 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         case dongnai = "Đồng Nai"
     }
     @IBAction func btnSelectCityTapped(_ sender: Any) {
-        //
+        
         UIView.animate(withDuration: 0.3) {
             self.btnCity.forEach { (button) in
                 button.isHidden = !button.isHidden
@@ -111,13 +102,7 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         UIView.animate(withDuration: 0.3) {
             self.imgDropArrow.transform = self.imgDropArrow.transform.rotated(by: CGFloat(Double.pi))
         }
-        //
-//        self.btnCity.forEach { (button) in
-//            UIView.animate(withDuration: 0.3, animations: {
-//                button.isHidden = !button.isHidden
-//                self.view.layoutIfNeeded()
-//            })
-//        }
+        
     }
     @IBAction func cityTapped(_ sender : UIButton){
         guard let title = sender.currentTitle, let city = Citys(rawValue: title)else{
@@ -136,43 +121,36 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
                 self.currentCity = "danang"
             }
         
-        
-        
         btnSelectCity.titleLabel?.textAlignment = .center
         btnSelectCity.titleLabel?.text = title
         self.hideButtonCitys()
+        showLoadingView(value: true)
         UIView.animate(withDuration: 0.3) {
             self.imgDropArrow.transform = self.imgDropArrow.transform.rotated(by: CGFloat(Double.pi))
         }
-        tableViewCinema.isHidden = false
-        lbNoResultsFound.isHidden = true    
-        
-        // get data
+        //get data
         getCinemaData()
+        
+    }
+    func showLoadingView(value : Bool){
+        if value{
+            self.loadingView.startAnimating()
+        }else{
+            self.loadingView.stopAnimating()
+        }
+        tableViewCinema.isHidden = value
+        lbNoResultsFound.isHidden = true
     }
     func getCinemaData(){
         self.listCinema.removeAll()
         var urlString  = LinkAPI.apiCinema
         urlString = String(format: urlString, "\(self.currentCity)")
-        
-        print(urlString)
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            if response.result.isSuccess{
-                if let dic = response.result.value as? [String: Any]{
-                    if let results = dic["data"] as? [[String : Any]]{
-                        for result in results{
-                            let cinema = CinemaEntity(dictionary: result)
-                            self.listCinema.append(cinema)
-                        }
-                    }
-                    
-                }
-//                self.loadingView()
-                print(self.listCinema.count)
+        APIManager.getCinema(urlString: urlString) { (cinemas) in
+            self.listCinema = cinemas
+            if self.listCinema.count != 0{
                 self.tableViewCinema.reloadData()
-//                self.stopAnimating()
-            }else if response.result.isFailure{
-                print("error")
+                self.lbNoResultsFound.isHidden = true
+                self.showLoadingView(value: false)
             }
         }
     }
@@ -184,7 +162,6 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         let placeMark : MKPlacemark = MKPlacemark(coordinate: cordinate)
         let mapItem : MKMapItem = MKMapItem(placemark: placeMark)
         mapItem.name = namePlace
-        
         let reSpan = MKCoordinateRegion(center: cordinate, latitudinalMeters: dis, longitudinalMeters: dis)
         let options = [MKLaunchOptionsMapCenterKey : NSValue(mkCoordinate: reSpan.center)]
         mapItem.openInMaps(launchOptions: options)

@@ -20,6 +20,8 @@
                 <outlet property="lbKnownOfDepartment" destination="A8D-RW-g1h" id="PBd-H8-iF7"/>
                 <outlet property="lbName" destination="nYN-fo-CL3" id="Av9-WW-mYg"/>
                 <outlet property="lbPlaceOfBirth" destination="l91-xM-x3K" id="rfS-sL-6Jw"/>
+                <outlet property="lineSeperate1" destination="ynW-yp-cLJ" id="tHW-I1-nZf"/>
+                <outlet property="lineSeperate2" destination="A08-9c-3bt" id="X2R-kH-E8u"/>
                 <outlet property="tvSummary" destination="Ztx-Hx-Zoi" id="NO7-8V-e9u"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>

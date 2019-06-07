@@ -16,19 +16,6 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
     @IBOutlet weak var cltViewPopularMovies : UICollectionView!
     @IBOutlet weak var slideShow :  ImageSlideshow!
     @IBOutlet weak var lbpopularFilm: UILabel!
-    var listPopularMovies : [FilmEntity] = []
-    var listNowPlayingMovies : [FilmEntity] = []
-    var listPopularPeople : [ActorEntity] = []
-    var listHotMovies : [FilmEntity] = []
-    var listImageFilmHot : [String] = []
-    
-//    let type: NVActivityIndicatorType = .circleStrokeSpin
-//    let color = UIColor.white
-//    let padding: CGFloat = 30
-//    let frame = CGRect(x: UIScreen.main.bounds.width/2 - 10, y: UIScreen.main.bounds.height/2 - 10, width: 20, height: 20)
-//    let animation = NVActivityIndicatorView(frame: frame, type: type, color: color, padding: padding)
-//    return animation
-    
     @IBOutlet weak var btnSeeAllPopularMovies : UIView!
     @IBOutlet weak var btnSeeAllPopularPeople : UIView!
     @IBOutlet weak var btnSeeAllNowPlaying : UIView!
@@ -39,11 +26,22 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
     @IBOutlet weak var cltViewNowPlaying: UICollectionView!
     @IBOutlet weak var cltHotMovie: UICollectionView!
     
+    var listPopularMovies : [FilmEntity] = []
+    var listNowPlayingMovies : [FilmEntity] = []
+    var listPopularPeople : [ActorEntity] = []
+    var listHotMovies : [FilmEntity] = []
+    var listImageFilmHot : [String] = []
+    
+    let loadingView: NVActivityIndicatorView = {
+        let type: NVActivityIndicatorType = .circleStrokeSpin
+        let color = UIColor.white
+        let padding: CGFloat = 30
+        let frame = CGRect(x: UIScreen.main.bounds.width/2 - 10, y: UIScreen.main.bounds.height/2 - 10, width: 20, height: 20)
+        let animation = NVActivityIndicatorView(frame: frame, type: type, color: color, padding: padding)
+        return animation
+    }()
     override func viewWillAppear(_ animated: Bool) {
-        if Connectivity.isConnectedToInternet() {
-            print("Yes! internet is available.")
-            // do some tasks..
-        }else{
+        if Connectivity.isConnectedToInternet() == false{
             let alert = UIAlertController(title: "No internet connection!", message: "Please connect the internet", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
@@ -51,34 +49,45 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-//        (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .all
-
-        loadingView()
-        // Do any additional setup after loading the view.
-        getPopularMovies()
-        getNowPlayingMovies()
-        getPopularPeople()
         setUpView()
+        view.addSubview(loadingView)
+        showLoadingView(value: true)
         setUpNavigationBar()
         registerNib()
         setUpButtonSeeAll()
         setUpAutoScrollMovieHeader()
         setScrollDirectionCollectionView()
-  
+        getPopularMovies()
+        getNowPlayingMovies()
+        getPopularPeople()
     }
-
+    func showLoadingView(value : Bool){
+        if value{
+            self.loadingView.startAnimating()
+        }else{
+            self.loadingView.stopAnimating()
+        }
+        cltViewNowPlaying.isHidden = value
+        cltHotMovie.isHidden = value
+        cltViewPopularMovies.isHidden = value
+        cltViewPopularPeople.isHidden = value
+        lbNowPlaying.isHidden = value
+        lbpopularFilm.isHidden = value
+        lbPopularPeople.isHidden = value
+        btnSeeAllNowPlaying.isHidden = value
+        btnSeeAllPopularMovies.isHidden = value
+        btnSeeAllPopularPeople.isHidden = value
+    }
     func setUpView(){
+        
         navigationController?.navigationBar.barTintColor = UIColor.black
         tabBarController?.tabBar.barTintColor = UIColor.black
-        
         self.view.backgroundColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         cltViewPopularMovies.backgroundColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         cltViewNowPlaying.backgroundColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         cltViewPopularPeople.backgroundColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         cltHotMovie.backgroundColor = Color.backgroundColor
-        cltHotMovie.isPagingEnabled = true
-        
-        
+        cltHotMovie.isPagingEnabled = true 
         cltViewNowPlaying.delegate = self
         cltViewNowPlaying.dataSource = self
         
@@ -93,16 +102,7 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
         
         lbpopularFilm.textColor = .white
     }
-    func loadingView(){
-        let size = CGSize(width: 10 , height: 10)
-        let font = UIFont(name: "System", size: 12)
-        startAnimating(size, message: "Loading", messageFont: font, type: .ballPulse, color: .white, padding: 20, displayTimeThreshold: 2, minimumDisplayTime: 2, backgroundColor: Color.backgroundColor, textColor: .white, fadeInAnimation: nil)
-        //stop
-        _ = Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(stopLoading), userInfo: nil, repeats: false)
-    }
-    @objc func stopLoading(){
-        stopAnimating()
-    }
+
     func setUpButtonSeeAll(){
         // btn see all popular movie
         let tapGestureForSeeAllPopularMovie = UITapGestureRecognizer(target: self, action: #selector(btnSeeAllPopularMoviesTapped))
@@ -156,60 +156,28 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
 
     func getPopularMovies(){
         let urlString  = LinkAPI.apiFilm
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-                if response.result.isSuccess{
-                    if let responeValue = response.result.value as? [String: Any]{
-                        if let listDictFilm = responeValue["results"] as? [[String: Any]]{
-                            for dic in listDictFilm {
-                                let film = FilmEntity(dictionary: dic)
-                                self.listPopularMovies.append(film)
-                            }
-                        }
-                    }
-                    self.cltViewPopularMovies.reloadData()
-                    self.cltHotMovie.reloadData()
-                }else{
-                    print("error")
-                }
+        APIManager.getPopularMovies(urlString: urlString) { (listMovies) in
+            self.listPopularMovies = listMovies
+            self.cltViewPopularMovies.reloadData()
+            self.cltHotMovie.reloadData()
         }
     }
 
     func getNowPlayingMovies(){
         let urlString  = LinkAPI.apiNowPlaying
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            if response.result.isSuccess{
-                if let responeValue = response.result.value as? [String: Any]{
-                    if let listDictFilm = responeValue["results"] as? [[String: Any]]{
-                        for dic in listDictFilm {
-                            let film = FilmEntity(dictionary: dic)
-                            self.listNowPlayingMovies.append(film)
-                        }
-                    }
-                }
-                self.cltViewNowPlaying.reloadData()
-            }else{
-                print("error")
-            }
+        APIManager.getNowPlayingMovies(urlString: urlString) { (listMovies) in
+            self.listNowPlayingMovies = listMovies
+            self.cltViewNowPlaying.reloadData()
+            self.cltViewNowPlaying.reloadData()
         }
     }
     func getPopularPeople(){
         let urlString  = LinkAPI.apiPopularPeople
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            if response.result.isSuccess{
-                if let responeValue = response.result.value as? [String: Any]{
-                    if let listDictFilm = responeValue["results"] as? [[String: Any]]{
-                        for dic in listDictFilm {
-                            let actor = ActorEntity(dic: dic)
-                            self.listPopularPeople.append(actor)
-                        }
-                    }
-                }
-                self.cltViewPopularPeople.reloadData()
-                //self.getImageFilmHot()
-                //self.stopAnimating()
-               
-            }else{
-                print("error")
+        APIManager.getPopularPeople(urlString: urlString) { (listPeople) in
+            self.listPopularPeople = listPeople
+            self.cltViewPopularPeople.reloadData()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.showLoadingView(value: false)
             }
         }
     }
@@ -244,25 +212,8 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
                 self.listImageFilmHot.append("https://image.tmdb.org/t/p/original\(path)")
             }
         }
-        //setUpImageViewSlideShow()
     }
-//    func setUpImageViewSlideShow(){
-//        slideShow.slideshowInterval = 5
-//        slideShow.pageIndicator = nil
-//        slideShow.contentScaleMode = .scaleAspectFill
-//        //        slideShow.backgroundColor = UIColor.black
-//        //        slideShow.activityIndicator = DefaultActivityIndicator()
-//        //        slideShow.zoomEnabled = true
-//        slideShow.maximumScale = 5
-//        //set image
-//        slideShow.setImageInputs([
-//            SDWebImageSource(urlString: self.listImageFilmHot[0],placeholder: UIImage(named: "noImage"))!,
-//            SDWebImageSource(urlString: self.listImageFilmHot[1])!,
-//            SDWebImageSource(urlString: self.listImageFilmHot[2])!,
-//            SDWebImageSource(urlString: self.listImageFilmHot[3])!,
-//            SDWebImageSource(urlString: self.listImageFilmHot[4])!,
-//            ])
-//    }
+
 
     @objc func scrollToNextCell(){
         //get cell size
@@ -282,16 +233,6 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
      
     }
 
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
 extension FeaturedViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{

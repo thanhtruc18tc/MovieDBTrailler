@@ -19,8 +19,6 @@ class SearchMovieViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
         searchBar.delegate = self
         tableViewMovie.dataSource = self
         tableViewMovie.delegate = self
@@ -40,7 +38,6 @@ class SearchMovieViewController: UIViewController {
         //register nib
         let nib = UINib(nibName: "CellForSeeAllPopularFilmsTableViewCell", bundle: nil)
         tableViewMovie.register(nib, forCellReuseIdentifier: "cellForSeeAllPopularFilms")
-        
         tableViewMovie.backgroundColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         searchBar.keyboardAppearance = .dark
         tableViewMovie.keyboardDismissMode = .onDrag
@@ -59,36 +56,11 @@ class SearchMovieViewController: UIViewController {
     func searchFilms(key: String, page : Int){
         var urlString = LinkAPI.apiSearchMoreFilms
         urlString = String(format: urlString, key,"\(page)")
-        print(urlString)
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            if response.result.isSuccess{
-                if let dic = response.result.value as? [String: Any]{
-                    if let results = dic["results"] as? [[String : Any]]{
-                        for result in results{
-                            let film = FilmEntity(dictionary: result)
-                            self.listFilmFound.append(film)
-                        }
-                    }
-                    
-                }
-                print(self.listFilmFound.count)
-                self.tableViewMovie.reloadData()
-            }else if response.result.isFailure{
-                print("error")
-            }
+        APIManager.searchFilms(urlString: urlString) { (listFilm) in
+            self.listFilmFound = listFilm
+            self.tableViewMovie.reloadData()
         }
     }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 extension SearchMovieViewController : UISearchBarDelegate{
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -97,17 +69,17 @@ extension SearchMovieViewController : UISearchBarDelegate{
         // get search key
         let key = searchBar.text!
         self.searchKey = key.replacingOccurrences(of: " ", with: "%20")
+        self.listFilmFound.removeAll()
         
         if searchBar.text != ""{
             lbNoResultsFound.isHidden =  true
             tableViewMovie.isHidden = false
-            self.listFilmFound.removeAll()
             searchFilms(key: self.searchKey, page: page)
             
         }else{
             lbNoResultsFound.isHidden = false
             tableViewMovie.isHidden = true
-            listFilmFound.removeAll()
+//            listFilmFound.removeAll()
         }
         self.tableViewMovie.reloadData()
     }
@@ -115,6 +87,8 @@ extension SearchMovieViewController : UISearchBarDelegate{
         searchBar.text = nil
         searchBar.showsCancelButton = false
         searchBar.endEditing(true)
+        tableViewMovie.isHidden = true
+        lbNoResultsFound.isHidden = false
         listFilmFound.removeAll()
         tableViewMovie.reloadData()
     }
@@ -131,9 +105,7 @@ extension SearchMovieViewController : UITableViewDataSource,UITableViewDelegate{
         if let title = listFilmFound[indexPath.row].title{
             cell.lbTile.text = title
             cell.lbDate.text = listFilmFound[indexPath.row].release_date
-            
             cell.starRateBar.rating = listFilmFound[indexPath.row].vote_average ?? 0
-            
             cell.starRateBar.settings.textColor = .orange
         }
         if let vote = listFilmFound[indexPath.row].vote_count{
@@ -141,8 +113,6 @@ extension SearchMovieViewController : UITableViewDataSource,UITableViewDelegate{
         }
         if let score = listFilmFound[indexPath.row].vote_average{
             cell.starRateBar.text = "\(score)"
-            
-            
         }
         //set image
         if let linkImg = listFilmFound[indexPath.row].poster_path{
@@ -150,15 +120,12 @@ extension SearchMovieViewController : UITableViewDataSource,UITableViewDelegate{
             let url = URL(string: link)
             cell.imgFilm.sd_setImage(with: url)
         }
-        
         cell.lbTile.textColor = .white
         cell.lbDate.textColor = .lightGray
         cell.lbVote.textColor = .lightGray
         cell.vBackground.backgroundColor = Color.backgroundColor
         cell.selectionStyle = .none
         cell.starRateBar.settings.updateOnTouch = false
-        
-        
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -170,7 +137,7 @@ extension SearchMovieViewController : UITableViewDataSource,UITableViewDelegate{
         if page == 50{
             return
         }
-        if indexPath.row == listFilmFound.count-1{
+        if indexPath.row == listFilmFound.count-5{
             page = page + 1
             searchFilms(key: self.searchKey, page: page)
 

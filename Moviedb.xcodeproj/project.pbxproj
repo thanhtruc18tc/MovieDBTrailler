@@ -22,6 +22,7 @@
 		1B86A21B229F7F2F00AFD3E4 /* launchImgage.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1B86A21A229F7F2F00AFD3E4 /* launchImgage.jpg */; };
 		1B86A21F229F917E00AFD3E4 /* CinemaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B86A21D229F917E00AFD3E4 /* CinemaViewController.swift */; };
 		1B86A220229F917E00AFD3E4 /* CinemaViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1B86A21E229F917E00AFD3E4 /* CinemaViewController.xib */; };
+		1B89E6E322A8F03D002130E5 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B89E6E222A8F03D002130E5 /* APIManager.swift */; };
 		1B8C4187229FE7BD00C86908 /* CinemaEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B8C4186229FE7BD00C86908 /* CinemaEntity.swift */; };
 		1B8D280422968A660095F393 /* FilmDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B8D280322968A660095F393 /* FilmDetails.swift */; };
 		1B8D280622968D7D0095F393 /* GenreEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B8D280522968D7C0095F393 /* GenreEntity.swift */; };
@@ -90,6 +91,7 @@
 		1B86A21A229F7F2F00AFD3E4 /* launchImgage.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = launchImgage.jpg; sourceTree = "<group>"; };
 		1B86A21D229F917E00AFD3E4 /* CinemaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinemaViewController.swift; sourceTree = "<group>"; };
 		1B86A21E229F917E00AFD3E4 /* CinemaViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CinemaViewController.xib; sourceTree = "<group>"; };
+		1B89E6E222A8F03D002130E5 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		1B8C4186229FE7BD00C86908 /* CinemaEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinemaEntity.swift; sourceTree = "<group>"; };
 		1B8D280322968A660095F393 /* FilmDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilmDetails.swift; sourceTree = "<group>"; };
 		1B8D280522968D7C0095F393 /* GenreEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenreEntity.swift; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				1B7BC87122A7A8250070A9F1 /* Connectivity.swift */,
+				1B89E6E222A8F03D002130E5 /* APIManager.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -702,6 +705,7 @@
 				1B8E80B52297913E00A3F58F /* CrewEntity.swift in Sources */,
 				1BA0EF20229E2578007A8946 /* MovieData.xcdatamodeld in Sources */,
 				1B9ADCAB22981C8C00D90A82 /* CellForSearchFilm.swift in Sources */,
+				1B89E6E322A8F03D002130E5 /* APIManager.swift in Sources */,
 				1B83701622A0384800F2A76C /* ExpandedCellForCinema.swift in Sources */,
 				1B9EE9032295466C00BD3A51 /* Tabbar.swift in Sources */,
 				1B86A21F229F917E00AFD3E4 /* CinemaViewController.swift in Sources */,
@@ -858,7 +862,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3YNZGX73JH;
 				INFOPLIST_FILE = Moviedb/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -878,7 +882,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3YNZGX73JH;
 				INFOPLIST_FILE = Moviedb/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

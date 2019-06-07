@@ -48,35 +48,12 @@ class SeeAllPopularPeopleViewController: UIViewController {
     }
     func loadMorePeople(){
         var urlString  = LinkAPI.apiAllPopularPeople
-       
-        
         urlString = String(format: urlString, "\(page)")
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            if response.result.isSuccess{
-                if let responeValue = response.result.value as? [String: Any]{
-                    if let listDictFilm = responeValue["results"] as? [[String: Any]]{
-                        for dic in listDictFilm {
-                            let actor = ActorEntity(dic: dic)
-                            self.listPeople.append(actor)
-                        }
-                    }
-                }
-                self.tableViewPopularPeople.reloadData()
-            }else{
-                print("error")
-            }
+        APIManager.loadMorePeople(urlString: urlString) { (people) in
+            self.listPeople += people
+            self.tableViewPopularPeople.reloadData()
         }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 extension SeeAllPopularPeopleViewController : UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -89,7 +66,7 @@ extension SeeAllPopularPeopleViewController : UITableViewDelegate, UITableViewDa
         if let linkImg = listPeople[indexPath.row].profile_path{
             let link = "https://image.tmdb.org/t/p/original\(linkImg)"
             let url = URL(string: link)
-            cell.imgPeople.sd_setImage(with: url)
+            cell.imgPeople.sd_setImage(with: url, placeholderImage: UIImage(named: "noImage"))
             cell.vBackgrounnd.backgroundColor = Color.backgroundColor
             cell.lbName.textColor = .white
             cell.selectionStyle = .none
@@ -105,7 +82,7 @@ extension SeeAllPopularPeopleViewController : UITableViewDelegate, UITableViewDa
         navigationController?.pushViewController(actorDetailViewController, animated: true)
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == listPeople.count-1 {
+        if indexPath.row == listPeople.count-5 {
             page += 1
             loadMorePeople()
         }

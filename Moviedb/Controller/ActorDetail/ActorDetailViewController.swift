@@ -10,13 +10,6 @@ import UIKit
 import  Alamofire
 import NVActivityIndicatorView
 class ActorDetailViewController: UIViewController, NVActivityIndicatorViewable {
-    var id = 0
-    func getId(idActor : Int){
-        self.id = idActor
-    }
-    var actorDetail : ActorEntity!
-    var listFilmCredits : [FilmEntity] = []
-    
     @IBOutlet weak var lbName: UILabel!
     @IBOutlet weak var lbDateOfBirth: UILabel!
     @IBOutlet weak var lbPlaceOfBirth: UILabel!
@@ -24,19 +17,34 @@ class ActorDetailViewController: UIViewController, NVActivityIndicatorViewable {
     @IBOutlet weak var tvSummary: UITextView!
     @IBOutlet weak var imgActor : UIImageView!
     @IBOutlet weak var lbKnownFor: UILabel!
-    
     @IBOutlet weak var collectionViewFilmCredits: UICollectionView!
     @IBOutlet weak var lbBiography: UILabel!
+    @IBOutlet weak var lineSeperate1: UIView!
+    @IBOutlet weak var lineSeperate2: UIView!
+
+    var id = 0
+    var actorDetail : ActorEntity!
+    var listFilmCredits : [FilmEntity] = []
+    
+    func getId(idActor : Int){
+        self.id = idActor
+    }
+    let loadingView: NVActivityIndicatorView = {
+        let type: NVActivityIndicatorType = .circleStrokeSpin
+        let color = UIColor.white
+        let padding: CGFloat = 30
+        let frame = CGRect(x: UIScreen.main.bounds.width/2 - 10, y: UIScreen.main.bounds.height/2 - 10, width: 20, height: 20)
+        let animation = NVActivityIndicatorView(frame: frame, type: type, color: color, padding: padding)
+        return animation
+    }()
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadingView()
+        view.addSubview(loadingView)
+        
         collectionViewFilmCredits.dataSource = self
         collectionViewFilmCredits.delegate = self
         getPeopleDetailFromAPI()
         getFilmCredits()
-        // Do any additional setup after loading the view.
-        print(self.id)
-
         self.view.backgroundColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         registerNib()
         setUpTabBar()
@@ -44,10 +52,24 @@ class ActorDetailViewController: UIViewController, NVActivityIndicatorViewable {
         setUpNavigationbar()
   
     }
-    func loadingView(){
-        let size = CGSize(width: 10 , height: 10)
-        let font = UIFont(name: "System", size: 12)
-        startAnimating(size, message: "Loading", messageFont: font, type: .ballPulse, color: .white, padding: 20, displayTimeThreshold: 2, minimumDisplayTime: 2, backgroundColor: Color.backgroundColor, textColor: .white, fadeInAnimation: nil)
+    func showLoadingView(value : Bool){
+        if value{
+            self.loadingView.startAnimating()
+        }else{
+            self.loadingView.stopAnimating()
+        }
+        imgActor.isHidden = value
+        lbName.isHidden = value
+        lbDateOfBirth.isHidden = value
+        lbKnownFor.isHidden = value
+        lbBiography.isHidden = value
+        lbPlaceOfBirth.isHidden = value
+        lbKnownOfDepartment.isHidden = value
+        tvSummary.isHidden = value
+        lbBiography.isHidden = value
+        collectionViewFilmCredits.isHidden = value
+        lineSeperate1.isHidden = value
+        lineSeperate2.isHidden = value
     }
     func registerNib(){
         let nibCell = UINib(nibName: "CellForFilm", bundle: nil)
@@ -62,13 +84,13 @@ class ActorDetailViewController: UIViewController, NVActivityIndicatorViewable {
         tabBarController?.tabBar.barTintColor = .black
     }
     func setUpVIew(){
+        showLoadingView(value: true)
         lbBiography.textColor = .white
         lbKnownFor.textColor = .white
         lbName.textColor = .white
         lbDateOfBirth.textColor = .white
         lbPlaceOfBirth.textColor = .white
         lbKnownOfDepartment.textColor = .white
-        
         tvSummary.textColor = .white
         tvSummary.backgroundColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         collectionViewFilmCredits.backgroundColor = Color.backgroundColor
@@ -78,42 +100,16 @@ class ActorDetailViewController: UIViewController, NVActivityIndicatorViewable {
     }
     func getPeopleDetailFromAPI(){
         let urlString = "https://api.themoviedb.org/3/person/\(id)?api_key=c9238e9fff997ddc12fc76e3904e2618&language=en-US"
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            
-            if response.result.isSuccess{
-                if let dic = response.result.value as? [String: Any]{
-                    let actor = ActorEntity(dic: dic)
-                    self.actorDetail = actor
-                    
-                }
-                self.displayData()
-                
-            }else{
-                print("error")
-            }
+        APIManager.getPeopleDetail(urlString: urlString) { (peopleDetail) in
+            self.actorDetail = peopleDetail
+            self.displayData()
         }
     }
     func getFilmCredits(){
         let urlString = "https://api.themoviedb.org/3/person/\(id)/movie_credits?api_key=c9238e9fff997ddc12fc76e3904e2618&language=en-US"
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            
-            if response.result.isSuccess{
-                if let responeValue = response.result.value as? [String: Any]{
-                    if let listDictFilm = responeValue["cast"] as? [[String: Any]]{
-                        for dic in listDictFilm {
-                            let film = FilmEntity(dictionary: dic)
-                            self.listFilmCredits.append(film)
-                            
-                        }
-                        
-                    }
-                    
-                }
-                self.collectionViewFilmCredits.reloadData()
-                
-            }else{
-                print("error")
-            }
+        APIManager.getFilmCredits(urlString: urlString) { (filmCredits) in
+            self.listFilmCredits = filmCredits
+            self.collectionViewFilmCredits.reloadData()
         }
     }
     func displayData(){
@@ -129,7 +125,8 @@ class ActorDetailViewController: UIViewController, NVActivityIndicatorViewable {
         }
         tvSummary.text = actorDetail.biography
         self.loadImageForActor()
-        stopAnimating()
+        showLoadingView(value: false)
+
     }
     func loadImageForActor(){
         if let path = actorDetail.profile_path{
@@ -144,16 +141,6 @@ class ActorDetailViewController: UIViewController, NVActivityIndicatorViewable {
         let url = URL(string: linkImg)
         imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "noImage"))
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 extension ActorDetailViewController : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

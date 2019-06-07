@@ -43,48 +43,46 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
     func  getId(idFilm : Int) {
         self.id = idFilm
     }
+    let loadingView: NVActivityIndicatorView = {
+        let type: NVActivityIndicatorType = .circleStrokeSpin
+        let color = UIColor.white
+        let padding: CGFloat = 30
+        let frame = CGRect(x: UIScreen.main.bounds.width/2 - 10, y: UIScreen.main.bounds.height/2 - 10, width: 20, height: 20)
+        let animation = NVActivityIndicatorView(frame: frame, type: type, color: color, padding: padding)
+        return animation
+    }()
     override func viewWillAppear(_ animated: Bool) {
         if Database.shared.checkExist(idMovie: String(id)) == true{
             starButton.setImage(#imageLiteral(resourceName: "starFill"), for: .normal)
         }else{
             starButton.setImage(#imageLiteral(resourceName: "star"), for: .normal)
         }
-//        AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.portrait, andRotateTo: UIInterfaceOrientation.portrait)
-
     }
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews();
         UIApplication.shared.isStatusBarHidden = false
     }
-//    override func viewWillDisappear(_ animated: Bool) {
-//        AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.all)
-//
+
+//    func loadingView(){
+//        let size = CGSize(width: 10 , height: 10)
+//        let font = UIFont(name: "System", size: 12)
+//        startAnimating(size, message: "Loading", messageFont: font, type: .ballPulse, color: .white, padding: 20, displayTimeThreshold: 2, minimumDisplayTime: 2, backgroundColor: Color.backgroundColor, textColor: .white, fadeInAnimation: nil)
 //    }
-    func loadingView(){
-        let size = CGSize(width: 10 , height: 10)
-        let font = UIFont(name: "System", size: 12)
-        startAnimating(size, message: "Loading", messageFont: font, type: .ballPulse, color: .white, padding: 20, displayTimeThreshold: 2, minimumDisplayTime: 2, backgroundColor: Color.backgroundColor, textColor: .white, fadeInAnimation: nil)
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(id)
-        
-        loadingView()
+        setUpView()
+        view.addSubview(loadingView)
         
         collectionViewActors.delegate = self
         collectionViewActors.dataSource = self
-        
         getDetailFilmFromAPI()
         getVideoFromAPI()
         getPeopleFromAPI()
-       
         registerNib()
-        setUpView()
+        
         setUpNavigationBar()
         setUpCollectionView()
-        
-        
     }
     
     func setUpNavigationBar(){
@@ -101,7 +99,6 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         starButton.addTarget(self, action: #selector(starButtonTapped), for: .touchUpInside)
 
         navigationItem.rightBarButtonItems = [flexSpace,UIBarButtonItem(customView: shareButton),UIBarButtonItem(customView: starButton)]
-        
         navigationController?.navigationBar.tintColor = .orange
         navigationController?.navigationBar.barTintColor = UIColor.black
     }
@@ -120,7 +117,34 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         let activityController = UIActivityViewController(activityItems: [self.linkShare], applicationActivities: nil)
         present(activityController, animated: true, completion: nil)
     }
+    func showLoadingView(value : Bool){
+        if value{
+            self.loadingView.startAnimating()
+        }else{
+            self.loadingView.stopAnimating()
+        }
+        imgbackdrop.isHidden = value
+        imgFilm.isHidden = value
+        lbTitle.isHidden = value
+        lbLink.isHidden = value
+        lbDate.isHidden = value
+        lbGenre.isHidden = value
+        lbRevenue.isHidden = value
+        lbReleaseDate.isHidden = value
+        lbRuntime.isHidden = value
+        lbBudget.isHidden = value
+        lbSummary.isHidden = value
+        tvSummary.isHidden = value
+        lbTrailer.isHidden = value
+        lbMovieFact.isHidden = value
+        viewOfScrollView.isHidden = value
+        collectionViewActors.isHidden = value
+        collectionViewTrailers.isHidden = value
+        rateStarBar.isHidden = value
+        lbCast.isHidden = value    
+    }
     func setUpView(){
+        showLoadingView(value: true)
         // lb link homepage
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(linkTapped))
         lbLink.isUserInteractionEnabled = true
@@ -168,7 +192,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         rateStarBar.settings.starSize = 12
         rateStarBar.settings.starMargin = 1
         rateStarBar.settings.fillMode = .precise
-        
+        rateStarBar.settings.updateOnTouch = false
         rateStarBar.settings.textColor = .orange
         if let rating = filmDetails.vote_average{
             rateStarBar.rating = rating
@@ -181,63 +205,26 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "noImage"))
     }
     func getPeopleFromAPI(){
-//        let urlString = "https://api.themoviedb.org/3/movie/\(id)/credits?api_key=c9238e9fff997ddc12fc76e3904e2618"
         var urlString = LinkAPI.apiFilmDetails
         urlString = String(format: urlString, "\(id)")
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            if response.result.isSuccess{
-                if let dic = response.result.value as? [String: Any]{
-                    if let cast = dic["cast"] as? [[String : Any]]{
-                        for element in cast{
-                            let actor = CastEntity(dic: element)
-                            self.listActor.append(actor)
-                        }
-                    }
-                
-                }
-                self.collectionViewActors.reloadData()
-                
-            }else{
-                print("error")
-            }
+        APIManager.getPeopleForFilmDetail(urlString: urlString) { (people) in
+            self.listActor = people
+            self.collectionViewActors.reloadData()
         }
     }
     func getVideoFromAPI(){
-//        let urlString = "https://api.themoviedb.org/3/movie/\(id)/videos?api_key=c9238e9fff997ddc12fc76e3904e2618&language=en-US"
         var urlString = LinkAPI.apiTrailers
         urlString = String(format: urlString,"\(id)")
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            
-            if response.result.isSuccess{
-                if let dic = response.result.value as? [String: Any]{
-                    if let results = dic["results"] as? [[String : Any]]{
-                        for video in results{
-                            let video = VideoEntity(dic: video)
-                            self.listVideo.append(video)
-                        }
-                    }
-                }
-                self.collectionViewTrailers.reloadData()
-                
-            }else{
-                print("error")
-            }
+        APIManager.getVideo(urlString: urlString) { (videos) in
+            self.listVideo = videos
+            self.collectionViewTrailers.reloadData()
         }
-        
     }
     func getDetailFilmFromAPI(){
         let urlString = "https://api.themoviedb.org/3/movie/\(id)?api_key=c9238e9fff997ddc12fc76e3904e2618&language=en-US"
-        Alamofire.request(urlString, method: .get).responseJSON { (response) in
-            
-            if response.result.isSuccess{
-                if let dic = response.result.value as? [String: Any]{
-                    let film = FilmDetails(dic: dic)
-                    self.filmDetails = film
-                }
-                self.displayData()
-            }else{
-                print("error")
-            }
+        APIManager.getDetailFilmFromAPI(urlString: urlString) { (filmDetails) in
+            self.filmDetails = filmDetails
+            self.displayData()
         }
     }
     func displayData(){
@@ -245,7 +232,6 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         if let date = self.filmDetails.release_date{
             lbDate.text = String(date.prefix(4))
         }
-        
         lbLink.text = self.filmDetails.homepage
         // genre
         if let genre = self.filmDetails.genres?.name{
@@ -254,11 +240,11 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         // set image
         let linkImg = "https://image.tmdb.org/t/p/original\(self.filmDetails.poster_path ?? "" )"
         let url = URL(string: linkImg)
-        imgFilm.sd_setImage(with: url)
+        imgFilm.sd_setImage(with: url, placeholderImage: UIImage(named: "noImage"))
         
         let linkImg2 = "https://image.tmdb.org/t/p/original\(self.filmDetails.backdrop_path ?? "" )"
         let url2 = URL(string: linkImg2)
-        imgbackdrop.sd_setImage(with: url2)
+        imgbackdrop.sd_setImage(with: url2, placeholderImage: UIImage(named: "noImage"))
         
         lbReleaseDate.text = "Release Date: \(self.filmDetails.release_date ?? "none")"
         //label link
@@ -284,9 +270,9 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
             lbRevenue.text = "Revenue: " + convertToCurrency(number: revenue)
         }
         displayRateBar()
-        stopAnimating()
-        
+        showLoadingView(value: false)
     }
+
     @objc func linkTapped(){
         guard let link = URL(string: self.filmDetails.homepage!) else { return }
         UIApplication.shared.open(link)
@@ -296,10 +282,8 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         let seconds = minutes * 60
         let hours = seconds / 3600
         let minutes = (seconds % 3600) / 60
-       
         let runtime = String(hours) + " hrs " + String(minutes) + " mins"
         return runtime
-        
     }
     func convertToCurrency(number: Int) -> String{
         let myDouble = number
@@ -308,23 +292,10 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         currencyFormatter.numberStyle = .currency
         // localize to your grouping and decimal separator
         currencyFormatter.locale = Locale.current
-        
         // We'll force unwrap with the !, if you've got defined data you may need more error checking
-        
         let priceString = currencyFormatter.string(from: NSNumber(value: myDouble))!
-//        print(priceString) // Displays $9,999.99 in the US locale
         return priceString
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
 extension FilmDetailViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
@@ -334,7 +305,6 @@ extension FilmDetailViewController : UICollectionViewDataSource,UICollectionView
         }else{
             return listActor.count
         }
-        
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == self.collectionViewActors {
@@ -343,10 +313,8 @@ extension FilmDetailViewController : UICollectionViewDataSource,UICollectionView
                 cell.lbName.text = listActor[indexPath.row].name
                 cell.lbCharacter.text = listActor[indexPath.row].character
                 loadImageForActor(path: listActor[indexPath.row].profile_path ?? "", imageView: cell.imgProfile)
-                
             }
             return cell
-            
         } else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellTrailer", for: indexPath) as! CellForTrailer
             if listVideo.count != 0{
@@ -370,8 +338,6 @@ extension FilmDetailViewController : UICollectionViewDataSource,UICollectionView
                 
             )
         }
-        
-        
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == self.collectionViewActors{
@@ -381,6 +347,5 @@ extension FilmDetailViewController : UICollectionViewDataSource,UICollectionView
         }
         
     }
-    
     
 }
