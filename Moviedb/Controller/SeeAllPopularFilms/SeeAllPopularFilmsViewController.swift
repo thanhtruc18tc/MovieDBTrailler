@@ -7,16 +7,68 @@
 //
 
 import UIKit
+import Reachability
 import Alamofire
+import NVActivityIndicatorView
 class SeeAllPopularFilmsViewController: UIViewController {
     @IBOutlet weak var tableViewPopularFilms : UITableView!
+    
     var listFilms : [FilmEntity] = []
     var isNowPlaying =  false
     var page = 1
+    let reach : Reachability = Reachability.init(hostname: "www.google.com")!
+    
+    let loadingView: NVActivityIndicatorView = {
+        let type: NVActivityIndicatorType = .circleStrokeSpin
+        let color = UIColor.white
+        let padding: CGFloat = 30
+        let frame = CGRect(x: UIScreen.main.bounds.width/2 - 10, y: UIScreen.main.bounds.height/2 - 10, width: 20, height: 20)
+        let animation = NVActivityIndicatorView(frame: frame, type: type, color: color, padding: padding)
+        return animation
+    }()
+    
     func getFilms(arrFilms : [FilmEntity], isNowPlaying : Bool){
         self.listFilms = arrFilms
         self.isNowPlaying = isNowPlaying
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        DispatchQueue.global().async {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.networkChanged(note:)), name: .reachabilityChanged, object: nil)
+            do {
+                try self.reach.startNotifier()
+            }
+            catch{
+                print("errror")
+            }
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged , object: nil)
+        reach.stopNotifier()
+    }
+    
+    @objc func networkChanged(note: NSNotification){
+        let reachability = note.object as! Reachability
+        switch reachability.connection {
+        case .wifi, .cellular:
+            print("have internet discover")
+//            self.loadingView.stopAnimating()
+        case .none:
+            print("no internet")
+            self.loadingView.startAnimating()
+            setAlter()
+        }
+    }
+    
+    @objc func setAlter(){
+        let alert = UIAlertController(title: "No internet connection!", message: "Please connect the internet", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = Color.backgroundColor
@@ -36,10 +88,12 @@ class SeeAllPopularFilmsViewController: UIViewController {
         tableViewPopularFilms.dataSource = self
         
     }
+    
     func setUpTabBar(){
         tabBarController?.tabBar.tintColor = .orange
         tabBarController?.tabBar.barTintColor = .black
     }
+    
     func setUpNavigationBar(){
 
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.orange]
@@ -48,6 +102,7 @@ class SeeAllPopularFilmsViewController: UIViewController {
         navigationController?.navigationBar.barTintColor = .black
  
     }
+    
     func loadMoreFilms(){
         var urlString  = ""
         if isNowPlaying == true{
@@ -67,6 +122,7 @@ extension SeeAllPopularFilmsViewController : UITableViewDelegate, UITableViewDat
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return listFilms.count
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellForSeeAllPopularFilms", for: indexPath) as! CellForSeeAllPopularFilmsTableViewCell
         if listFilms.count != 0{
@@ -98,17 +154,20 @@ extension SeeAllPopularFilmsViewController : UITableViewDelegate, UITableViewDat
         }
         return cell
     }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let filmDetailViewController = FilmDetailViewController()
         filmDetailViewController.getId(idFilm: listFilms[indexPath.row].id ?? 0)
         navigationController?.pushViewController(filmDetailViewController, animated: true)
     }
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == listFilms.count-5 {
             page += 1
             loadMoreFilms()
         }
     }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 130
     }

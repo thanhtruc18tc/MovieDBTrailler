@@ -11,6 +11,7 @@ import ImageSlideshow
 import Alamofire
 import SDWebImage
 import NVActivityIndicatorView
+import Reachability
 class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
     
     @IBOutlet weak var cltViewPopularMovies : UICollectionView!
@@ -32,6 +33,9 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
     var listHotMovies : [FilmEntity] = []
     var listImageFilmHot : [String] = []
     
+    var time : Timer?
+    let reach : Reachability = Reachability.init(hostname: "www.google.com")!
+    
     let loadingView: NVActivityIndicatorView = {
         let type: NVActivityIndicatorType = .circleStrokeSpin
         let color = UIColor.white
@@ -40,18 +44,63 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
         let animation = NVActivityIndicatorView(frame: frame, type: type, color: color, padding: padding)
         return animation
     }()
+    
     override func viewWillAppear(_ animated: Bool) {
         if Connectivity.isConnectedToInternet() == false{
-            let alert = UIAlertController(title: "No internet connection!", message: "Please connect the internet", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            setAlter()
+        }
+        
+        self.navigationController?.navigationBar.isHidden = false
+        self.tabBarController?.tabBar.isHidden = false
+        
+        DispatchQueue.global().async {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.networkChanged(note:)), name: .reachabilityChanged, object: nil)
+            do {
+                try self.reach.startNotifier()
+            }
+            catch{
+                print("errror")
+            }
         }
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged , object: nil)
+        reach.stopNotifier()
+    }
+    @objc func networkChanged(note: NSNotification){
+        let reachability = note.object as! Reachability
+        switch reachability.connection {
+        case .wifi, .cellular:
+            print("have internet discover")
+            self.getPopularMovies()
+            self.getNowPlayingMovies()
+            self.getPopularPeople()
+//            self.loadingView.stopAnimating()
+        case .none:
+            print("no internet")
+            self.loadingView.startAnimating()
+            setAlter()
+        }
+    }
+    
+    @objc func setAlter(){
+        let alert = UIAlertController(title: "No internet connection!", message: "Please connect the internet", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
+    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
         view.addSubview(loadingView)
         showLoadingView(value: true)
+//        self.loadingView.startAnimating()
         setUpNavigationBar()
         registerNib()
         setUpButtonSeeAll()
@@ -109,7 +158,7 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
         btnSeeAllPopularMovies.backgroundColor = .clear
         btnSeeAllPopularMovies.addGestureRecognizer(tapGestureForSeeAllPopularMovie)
         btnSeeAllPopularMovies.isUserInteractionEnabled = true
-        // btn see all popular poeple
+        // btn see all popular people
         let tapGestureForSeeAllPopularPeople = UITapGestureRecognizer(target: self, action: #selector(btnSeeAllPopularPeopleTapped))
         btnSeeAllPopularPeople.backgroundColor = .clear
         btnSeeAllPopularPeople.addGestureRecognizer(tapGestureForSeeAllPopularPeople)
@@ -310,6 +359,15 @@ extension FeaturedViewController : UICollectionViewDataSource,UICollectionViewDe
             let height = 200
             return CGSize(width: width, height: height)
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if collectionView == cltHotMovie {
+            if indexPath.row == listPopularMovies.count - 1 {
+                cltHotMovie.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+            }
+        }
+        
     }
 }
 

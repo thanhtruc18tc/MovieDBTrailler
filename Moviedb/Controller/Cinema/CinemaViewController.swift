@@ -13,24 +13,19 @@ import NVActivityIndicatorView
 
 
 class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
-//    @IBOutlet weak var btnSelectCity : UIButton!
-//    @IBOutlet weak var btnHCM : UIButton!
-//    @IBOutlet weak var btnHNoi : UIButton!
-//    @IBOutlet weak var btnDNang : UIButton!
-//    @IBOutlet weak var btnDNai : UIButton!
-//    @IBOutlet weak var btnCTho : UIButton!
-//
+
     @IBOutlet var btnCity : [UIButton]!
     @IBOutlet weak var btnSelectCity : UIButton!
     @IBOutlet weak var tableViewCinema : UITableView!
     @IBOutlet weak var imgDropArrow : UIImageView!
     @IBOutlet weak var lbNoResultsFound : UILabel!
+    
     var latitude = 10.741644
     var longtitude = 106.701161
     let locationManager = CLLocationManager()
-    
     var listCinema : [CinemaEntity] = []
     var currentCity = "sg"
+    
     let loadingView: NVActivityIndicatorView = {
         let type: NVActivityIndicatorType = .circleStrokeSpin
         let color = UIColor.white
@@ -46,7 +41,6 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         self.btnCity.forEach { (button) in
             button.isHidden = true
             button.backgroundColor = Color.backgroundColor
-            
         }
         self.view.setNeedsLayout()
         self.view.bringSubviewToFront(imgDropArrow)
@@ -56,7 +50,6 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         navigationController?.navigationBar.isHidden = true
         hideButtonCitys()
         setUpTableView()
-
         
     }
     
@@ -77,13 +70,12 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
     func hideButtonCitys(){
         UIView.animate(withDuration: 0.3) {
             self.btnCity.forEach { (button) in
-//                button.translatesAutoresizingMaskIntoConstraints = false
                 button.isHidden = true
-//                button.backgroundColor = Color.backgroundColor
                 
             }
         }
     }
+    
     enum Citys : String{
         case sg = "Hồ Chí Minh"
         case hn = "Hà Nội"
@@ -91,8 +83,8 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         case danang = "Đà Nẵng"
         case dongnai = "Đồng Nai"
     }
+    
     @IBAction func btnSelectCityTapped(_ sender: Any) {
-        
         UIView.animate(withDuration: 0.3) {
             self.btnCity.forEach { (button) in
                 button.isHidden = !button.isHidden
@@ -102,8 +94,8 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         UIView.animate(withDuration: 0.3) {
             self.imgDropArrow.transform = self.imgDropArrow.transform.rotated(by: CGFloat(Double.pi))
         }
-        
     }
+    
     @IBAction func cityTapped(_ sender : UIButton){
         guard let title = sender.currentTitle, let city = Citys(rawValue: title)else{
             return
@@ -132,6 +124,7 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         getCinemaData()
         
     }
+    
     func showLoadingView(value : Bool){
         if value{
             self.loadingView.startAnimating()
@@ -141,6 +134,7 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         tableViewCinema.isHidden = value
         lbNoResultsFound.isHidden = true
     }
+    
     func getCinemaData(){
         self.listCinema.removeAll()
         var urlString  = LinkAPI.apiCinema
@@ -154,6 +148,7 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
             }
         }
     }
+    
     func openInMapApp(latitude : Double, longtitude : Double, namePlace : String ){
         let lat : CLLocationDegrees = latitude
         let long : CLLocationDegrees = longtitude
@@ -167,18 +162,6 @@ class CinemaViewController: UIViewController, NVActivityIndicatorViewable{
         mapItem.openInMaps(launchOptions: options)
         
     }
-   
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
 extension CinemaViewController : CellForCinemaDelegate {
@@ -186,12 +169,7 @@ extension CinemaViewController : CellForCinemaDelegate {
         var strArray = location.components(separatedBy: ",")
         let lat = strArray[0]
         let long = strArray[1]
-//        if let lat = Double(lat), let long = Double(long){
-//            self.openInMapApp(latitude: lat, longtitude: long, namePlace: name)
-//        }
-//        let mapViewController = MapViewController(nibName: "MapViewController", bundle: nil)
-//        mapViewController.getLocation(location: location, place: name)
-//        navigationController?.pushViewController(mapViewController, animated: true)
+
         // open google map app
         let customURL = "comgooglemaps://"
         let urlRoute = "comgooglemaps://?saddr=&daddr=\(lat),\(long)&directionsmode=driving"
@@ -220,10 +198,9 @@ extension CinemaViewController: UITableViewDelegate,UITableViewDataSource{
         cell.setData(cinema: listCinema[indexPath.row])
         cell.selectionStyle = .none
         cell.delegate = self
-
-//        cell.btnGuideRoad.addTarget(self, action: #selector(loadMap), for: .touchUpInside)
         return cell
     }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 160
     }

@@ -30,10 +30,12 @@ class SearchMovieViewController: UIViewController {
         setUpTableView()
         
     }
+    
     func setUpView(){
         tableViewMovie.isHidden = true
         lbNoResultsFound.isHidden = false
     }
+    
     func setUpTableView(){
         //register nib
         let nib = UINib(nibName: "CellForSeeAllPopularFilmsTableViewCell", bundle: nil)
@@ -43,10 +45,12 @@ class SearchMovieViewController: UIViewController {
         tableViewMovie.keyboardDismissMode = .onDrag
         
     }
+    
     func setUpSearchbar(){
         searchBar.barTintColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         searchBar.tintColor = .orange
     }
+    
     func setUpNavigationBar(){
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.orange]
         navigationItem.title = "Search"
@@ -83,6 +87,7 @@ extension SearchMovieViewController : UISearchBarDelegate{
         }
         self.tableViewMovie.reloadData()
     }
+    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         searchBar.showsCancelButton = false
@@ -95,11 +100,13 @@ extension SearchMovieViewController : UISearchBarDelegate{
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
     }
+    
 }
 extension SearchMovieViewController : UITableViewDataSource,UITableViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return listFilmFound.count
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellForSeeAllPopularFilms", for: indexPath) as! CellForSeeAllPopularFilmsTableViewCell
         if let title = listFilmFound[indexPath.row].title{
@@ -128,11 +135,13 @@ extension SearchMovieViewController : UITableViewDataSource,UITableViewDelegate{
         cell.starRateBar.settings.updateOnTouch = false
         return cell
     }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let filmDetailController = FilmDetailViewController()
         filmDetailController.getId(idFilm: listFilmFound[indexPath.row].id ?? 0)
         self.navigationController?.pushViewController(filmDetailController, animated: true)
     }
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if page == 50{
             return

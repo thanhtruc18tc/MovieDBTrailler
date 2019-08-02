@@ -18,6 +18,7 @@ class MyMoviesViewController: UIViewController {
         getMovieDataFromDB(data: Database.shared.getMovieData())
         self.tableViewMyMovie.reloadData()
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavigationBar()
@@ -28,6 +29,7 @@ class MyMoviesViewController: UIViewController {
         setUpTableView()
         
     }
+    
     func setUpTableView(){
         //register nib
         let nib = UINib(nibName: "CellForSeeAllPopularFilmsTableViewCell", bundle: nil)
@@ -39,11 +41,13 @@ class MyMoviesViewController: UIViewController {
         tableViewMyMovie.dataSource = self
         
     }
+    
     func setUpNavigationBar(){
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.orange]
         navigationItem.title = "My Movies"
         navigationController?.navigationBar.barTintColor = .black
     }
+    
     func getMovieDataFromDB(data : [Movie]){
         var i = 0
         if data != []{

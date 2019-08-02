@@ -9,7 +9,7 @@
 import UIKit
 import  Alamofire
 import IQKeyboardManagerSwift
-import Firebase
+//import Firebase
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        }
         
         window?.rootViewController = TabBar()
-        FirebaseApp.configure()
+//        FirebaseApp.configure()
         
         return true
     }

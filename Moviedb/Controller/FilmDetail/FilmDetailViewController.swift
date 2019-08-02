@@ -12,6 +12,7 @@ import YouTubePlayer
 import Cosmos
 import TinyConstraints
 import NVActivityIndicatorView
+import  Reachability
 class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
     @IBOutlet weak var lbTitle : UILabel!
     @IBOutlet weak var lbDate : UILabel!
@@ -27,12 +28,12 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
     @IBOutlet weak var lbTrailer: UILabel!
     @IBOutlet weak var lbMovieFact: UILabel!
     @IBOutlet weak var viewOfScrollView: UIView!
-    
     @IBOutlet weak var collectionViewTrailers: UICollectionView!
     @IBOutlet weak var collectionViewActors: UICollectionView!
     @IBOutlet weak var rateStarBar : CosmosView!
     @IBOutlet weak var lbCast: UILabel!
     @IBOutlet weak var imgbackdrop : UIImageView!
+    
     var starButton : UIButton!
     var filmDetails : FilmDetails!
     var listActor : [CastEntity] = []
@@ -40,9 +41,16 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
     var idVideo : [String] = []
     var linkShare = "https://www.youtube.com/watch?v="
     var id = 0
+    let reach : Reachability = Reachability.init(hostname: "www.google.com")!
+    
     func  getId(idFilm : Int) {
         self.id = idFilm
     }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+    
     let loadingView: NVActivityIndicatorView = {
         let type: NVActivityIndicatorType = .circleStrokeSpin
         let color = UIColor.white
@@ -51,24 +59,60 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         let animation = NVActivityIndicatorView(frame: frame, type: type, color: color, padding: padding)
         return animation
     }()
+    
     override func viewWillAppear(_ animated: Bool) {
         if Database.shared.checkExist(idMovie: String(id)) == true{
             starButton.setImage(#imageLiteral(resourceName: "starFill"), for: .normal)
         }else{
             starButton.setImage(#imageLiteral(resourceName: "star"), for: .normal)
         }
+
+        self.navigationController?.navigationBar.isHidden = false
+        self.tabBarController?.tabBar.isHidden = false
+        
+        DispatchQueue.global().async {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.networkChanged(note:)), name: .reachabilityChanged, object: nil)
+            do {
+                try self.reach.startNotifier()
+            }
+            catch{
+                print("errror")
+            }
+        }
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged , object: nil)
+        reach.stopNotifier()
+    }
+    
+    @objc func networkChanged(note: NSNotification){
+        let reachability = note.object as! Reachability
+        switch reachability.connection {
+        case .wifi, .cellular:
+            print("have internet discover")
+            self.getDetailFilmFromAPI()
+            self.getVideoFromAPI()
+            self.getPeopleFromAPI()
+//            self.loadingView.stopAnimating()
+        case .none:
+            print("no internet")
+            self.loadingView.startAnimating()
+            setAlter()
+        }
+    }
+    
+    @objc func setAlter(){
+        let alert = UIAlertController(title: "No internet connection!", message: "Please connect the internet", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews();
         UIApplication.shared.isStatusBarHidden = false
     }
 
-//    func loadingView(){
-//        let size = CGSize(width: 10 , height: 10)
-//        let font = UIFont(name: "System", size: 12)
-//        startAnimating(size, message: "Loading", messageFont: font, type: .ballPulse, color: .white, padding: 20, displayTimeThreshold: 2, minimumDisplayTime: 2, backgroundColor: Color.backgroundColor, textColor: .white, fadeInAnimation: nil)
-//    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
@@ -80,7 +124,6 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         getVideoFromAPI()
         getPeopleFromAPI()
         registerNib()
-        
         setUpNavigationBar()
         setUpCollectionView()
     }
@@ -102,6 +145,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         navigationController?.navigationBar.tintColor = .orange
         navigationController?.navigationBar.barTintColor = UIColor.black
     }
+    
     @objc func starButtonTapped(){
         if Database.shared.checkExist(idMovie: String(id)) == false {
             starButton.setImage(#imageLiteral(resourceName: "starFill"), for: .normal)
@@ -111,12 +155,14 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
             Database.shared.deleteMovieDataByID(idMovie: self.id)
         }
     }
+    
     @objc func shareButtonTapped(){
         self.linkShare = self.linkShare + self.listVideo[0].key!
         print(self.linkShare)
         let activityController = UIActivityViewController(activityItems: [self.linkShare], applicationActivities: nil)
         present(activityController, animated: true, completion: nil)
     }
+    
     func showLoadingView(value : Bool){
         if value{
             self.loadingView.startAnimating()
@@ -143,6 +189,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         rateStarBar.isHidden = value
         lbCast.isHidden = value    
     }
+    
     func setUpView(){
         showLoadingView(value: true)
         // lb link homepage
@@ -167,6 +214,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         lbCast.textColor = .white
         rateStarBar.backgroundColor = Color.backgroundColor
     }
+    
     func registerNib(){
         let nibCellTrailer = UINib(nibName: "CellForTrailer", bundle: nil)
         collectionViewTrailers.register(nibCellTrailer, forCellWithReuseIdentifier: "cellTrailer")
@@ -174,6 +222,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         let nibCellCast = UINib(nibName: "CellForCast", bundle: nil)
         collectionViewActors.register(nibCellCast, forCellWithReuseIdentifier: "cellActor")
     }
+    
     func setUpCollectionView(){
         collectionViewTrailers.backgroundColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         collectionViewTrailers.reloadData()
@@ -186,6 +235,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
             layout.scrollDirection = .horizontal
         }
     }
+    
     func displayRateBar(){
         rateStarBar.backgroundColor = #colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)
         rateStarBar.settings.totalStars = 10
@@ -199,6 +249,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
             rateStarBar.text = "\(rating)"
         }
     }
+    
     func loadImageForActor(path : String, imageView : UIImageView){
         let linkImg = "https://image.tmdb.org/t/p/original\(path )"
         let url = URL(string: linkImg)
@@ -212,6 +263,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
             self.collectionViewActors.reloadData()
         }
     }
+    
     func getVideoFromAPI(){
         var urlString = LinkAPI.apiTrailers
         urlString = String(format: urlString,"\(id)")
@@ -220,6 +272,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
             self.collectionViewTrailers.reloadData()
         }
     }
+    
     func getDetailFilmFromAPI(){
         let urlString = "https://api.themoviedb.org/3/movie/\(id)?api_key=c9238e9fff997ddc12fc76e3904e2618&language=en-US"
         APIManager.getDetailFilmFromAPI(urlString: urlString) { (filmDetails) in
@@ -227,6 +280,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
             self.displayData()
         }
     }
+    
     func displayData(){
         lbTitle.text = self.filmDetails.title
         if let date = self.filmDetails.release_date{
@@ -285,6 +339,7 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         let runtime = String(hours) + " hrs " + String(minutes) + " mins"
         return runtime
     }
+    
     func convertToCurrency(number: Int) -> String{
         let myDouble = number
         let currencyFormatter = NumberFormatter()
@@ -306,6 +361,7 @@ extension FilmDetailViewController : UICollectionViewDataSource,UICollectionView
             return listActor.count
         }
     }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == self.collectionViewActors {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellActor", for: indexPath) as! CellForCast
@@ -339,6 +395,7 @@ extension FilmDetailViewController : UICollectionViewDataSource,UICollectionView
             )
         }
     }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == self.collectionViewActors{
             let actorDetaiViewlController = ActorDetailViewController()
