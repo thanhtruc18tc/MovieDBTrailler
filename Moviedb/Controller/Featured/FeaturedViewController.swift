@@ -10,16 +10,16 @@ import UIKit
 import ImageSlideshow
 import Alamofire
 import SDWebImage
-import NVActivityIndicatorView
-import Reachability
-class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
+import PromiseKit
+
+class FeaturedViewController: BaseViewController {
     
-    @IBOutlet weak var cltViewPopularMovies : UICollectionView!
-    @IBOutlet weak var slideShow :  ImageSlideshow!
+    @IBOutlet weak var cltViewPopularMovies: UICollectionView!
+    @IBOutlet weak var slideShow:  ImageSlideshow!
     @IBOutlet weak var lbpopularFilm: UILabel!
-    @IBOutlet weak var btnSeeAllPopularMovies : UIView!
-    @IBOutlet weak var btnSeeAllPopularPeople : UIView!
-    @IBOutlet weak var btnSeeAllNowPlaying : UIView!
+    @IBOutlet weak var btnSeeAllPopularMovies: UIView!
+    @IBOutlet weak var btnSeeAllPopularPeople: UIView!
+    @IBOutlet weak var btnSeeAllNowPlaying: UIView!
     @IBOutlet weak var vOfScrollView: UIView!
     @IBOutlet weak var lbPopularPeople: UILabel!
     @IBOutlet weak var cltViewPopularPeople: UICollectionView!
@@ -27,88 +27,60 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
     @IBOutlet weak var cltViewNowPlaying: UICollectionView!
     @IBOutlet weak var cltHotMovie: UICollectionView!
     
-    var listPopularMovies : [FilmEntity] = []
-    var listNowPlayingMovies : [FilmEntity] = []
-    var listPopularPeople : [ActorEntity] = []
-    var listHotMovies : [FilmEntity] = []
-    var listImageFilmHot : [String] = []
-    
-    var time : Timer?
-    let reach : Reachability = Reachability.init(hostname: "www.google.com")!
-    
-    let loadingView: NVActivityIndicatorView = {
-        let type: NVActivityIndicatorType = .circleStrokeSpin
-        let color = UIColor.white
-        let padding: CGFloat = 30
-        let frame = CGRect(x: UIScreen.main.bounds.width/2 - 10, y: UIScreen.main.bounds.height/2 - 10, width: 20, height: 20)
-        let animation = NVActivityIndicatorView(frame: frame, type: type, color: color, padding: padding)
-        return animation
-    }()
-    
-    override func viewWillAppear(_ animated: Bool) {
-        if Connectivity.isConnectedToInternet() == false{
-            setAlter()
-        }
-        
-        self.navigationController?.navigationBar.isHidden = false
-        self.tabBarController?.tabBar.isHidden = false
-        
-        DispatchQueue.global().async {
-            NotificationCenter.default.addObserver(self, selector: #selector(self.networkChanged(note:)), name: .reachabilityChanged, object: nil)
-            do {
-                try self.reach.startNotifier()
-            }
-            catch{
-                print("errror")
-            }
-        }
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged , object: nil)
-        reach.stopNotifier()
-    }
-    @objc func networkChanged(note: NSNotification){
-        let reachability = note.object as! Reachability
-        switch reachability.connection {
-        case .wifi, .cellular:
-            print("have internet discover")
-            self.getPopularMovies()
-            self.getNowPlayingMovies()
-            self.getPopularPeople()
-//            self.loadingView.stopAnimating()
-        case .none:
-            print("no internet")
-            self.loadingView.startAnimating()
-            setAlter()
+    var listPopularMovies : [FilmEntity] = [] {
+        didSet {
+            self.cltViewPopularMovies.reloadData()
+            self.cltHotMovie.reloadData()
         }
     }
     
-    @objc func setAlter(){
-        let alert = UIAlertController(title: "No internet connection!", message: "Please connect the internet", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+    var listNowPlayingMovies : [FilmEntity] = [] {
+           didSet {
+               self.cltViewNowPlaying.reloadData()
+           }
+    }
+    
+    var listPopularPeople : [ActorEntity] = [] {
+           didSet {
+               self.cltViewPopularPeople.reloadData()
+           }
+    }
+    
+    var listHotMovies : [FilmEntity] = [] {
+           didSet {
+               self.cltHotMovie.reloadData()
+           }
+    }
+    
+    func getPopularMovie() {
+        firstly {
+            ApiProvider.shared.movieAPI.getPopularMovie()
+        }.get { (list) in
+            self.listPopularMovies = list
+        }.catch { (error) in
+            print(error.localizedDescription)
+        }
     }
     
     override var prefersStatusBarHidden: Bool {
         return true
     }
     
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
         view.addSubview(loadingView)
         showLoadingView(value: true)
-//        self.loadingView.startAnimating()
         setUpNavigationBar()
         registerNib()
         setUpButtonSeeAll()
         setUpAutoScrollMovieHeader()
         setScrollDirectionCollectionView()
-        getPopularMovies()
+        
+        getPopularMovie()
         getNowPlayingMovies()
         getPopularPeople()
+        
     }
     func showLoadingView(value : Bool){
         if value{
@@ -127,6 +99,7 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
         btnSeeAllPopularMovies.isHidden = value
         btnSeeAllPopularPeople.isHidden = value
     }
+    
     func setUpView(){
         
         navigationController?.navigationBar.barTintColor = UIColor.black
@@ -153,17 +126,19 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
     }
 
     func setUpButtonSeeAll(){
-        // btn see all popular movie
+        // Button see all popular movie
         let tapGestureForSeeAllPopularMovie = UITapGestureRecognizer(target: self, action: #selector(btnSeeAllPopularMoviesTapped))
         btnSeeAllPopularMovies.backgroundColor = .clear
         btnSeeAllPopularMovies.addGestureRecognizer(tapGestureForSeeAllPopularMovie)
         btnSeeAllPopularMovies.isUserInteractionEnabled = true
-        // btn see all popular people
+        
+        // Button see all popular people
         let tapGestureForSeeAllPopularPeople = UITapGestureRecognizer(target: self, action: #selector(btnSeeAllPopularPeopleTapped))
         btnSeeAllPopularPeople.backgroundColor = .clear
         btnSeeAllPopularPeople.addGestureRecognizer(tapGestureForSeeAllPopularPeople)
         btnSeeAllPopularPeople.isUserInteractionEnabled = true
-        // btn see all now playing
+        
+        // Button see all now playing
         let tapGestureSeeAllNowPlaying = UITapGestureRecognizer(target: self, action: #selector(btnSeeAllNowPlayingTapped))
         btnSeeAllNowPlaying.backgroundColor = .clear
         btnSeeAllNowPlaying.addGestureRecognizer(tapGestureSeeAllNowPlaying)
@@ -186,7 +161,7 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
             layout.minimumLineSpacing = 0
         }
     }
-    @objc func btnSeeAllPopularMoviesTapped(){
+    @objc func btnSeeAllPopularMoviesTapped() {
         let seeAllPopularFilmViewController = SeeAllPopularFilmsViewController(nibName: "SeeAllPopularFilmsViewController", bundle: nil)
         seeAllPopularFilmViewController.getFilms(arrFilms: listPopularMovies, isNowPlaying: false)
         navigationController?.pushViewController(seeAllPopularFilmViewController, animated: true)
@@ -217,7 +192,7 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
         APIManager.getNowPlayingMovies(urlString: urlString) { (listMovies) in
             self.listNowPlayingMovies = listMovies
             self.cltViewNowPlaying.reloadData()
-            self.cltViewNowPlaying.reloadData()
+            self.cltHotMovie.reloadData()
         }
     }
     func getPopularPeople(){
@@ -235,6 +210,7 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
         let url = URL(string: linkImg)
         imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "noImage"))
     }
+    
     func registerNib(){
         let nibCellPopularMovies = UINib(nibName: "CellForFilm", bundle: nil)
         cltViewPopularMovies.register(nibCellPopularMovies, forCellWithReuseIdentifier: "cell")
@@ -248,21 +224,11 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
         let nibCellHotMovies = UINib(nibName: "CellForHotMovie", bundle: nil)
         cltHotMovie.register(nibCellHotMovies, forCellWithReuseIdentifier: "cellHotFilm")
     }
+    
     func setUpNavigationBar(){
-
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.orange]
         navigationItem.title = "Discover"
     }
-    func getImageFilmHot(){
-        self.cltViewPopularMovies.reloadData()
-        // get image hot film
-        for i in 0...5{
-            if let path = self.listPopularMovies[i].backdrop_path{
-                self.listImageFilmHot.append("https://image.tmdb.org/t/p/original\(path)")
-            }
-        }
-    }
-
 
     @objc func scrollToNextCell(){
         //get cell size
@@ -273,22 +239,18 @@ class FeaturedViewController: UIViewController, NVActivityIndicatorViewable{
         
         //scroll to next cell
         cltHotMovie.scrollRectToVisible(CGRect(x: contentOffset.x + cellSize.width, y: contentOffset.y, width: cellSize.width, height: cellSize.height), animated: true);
-       
- 
     }
+    
     func setUpAutoScrollMovieHeader() {
         
         _ = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(scrollToNextCell), userInfo: nil, repeats: true);
-     
     }
-
-
 }
+
 extension FeaturedViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         return listPopularMovies.count
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -367,7 +329,6 @@ extension FeaturedViewController : UICollectionViewDataSource,UICollectionViewDe
                 cltHotMovie.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
             }
         }
-        
     }
 }
 

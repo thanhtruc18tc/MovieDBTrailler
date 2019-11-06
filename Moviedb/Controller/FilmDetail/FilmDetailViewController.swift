@@ -7,12 +7,14 @@
 //
 
 import UIKit
-import  Alamofire
+import Alamofire
 import YouTubePlayer
 import Cosmos
 import TinyConstraints
 import NVActivityIndicatorView
-import  Reachability
+import Reachability
+import PromiseKit
+
 class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
     @IBOutlet weak var lbTitle : UILabel!
     @IBOutlet weak var lbDate : UILabel!
@@ -35,7 +37,11 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
     @IBOutlet weak var imgbackdrop : UIImageView!
     
     var starButton : UIButton!
-    var filmDetails : FilmDetails!
+    var filmDetails : FilmDetails! {
+        didSet{
+            self.displayData()
+        }
+    }
     var listActor : [CastEntity] = []
     var listVideo : [VideoEntity] = []
     var idVideo : [String] = []
@@ -91,9 +97,9 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         switch reachability.connection {
         case .wifi, .cellular:
             print("have internet discover")
-            self.getDetailFilmFromAPI()
-            self.getVideoFromAPI()
-            self.getPeopleFromAPI()
+//            self.getDetailFilmFromAPI()
+//            self.getVideoFromAPI()
+//            self.getPeopleFromAPI()
 //            self.loadingView.stopAnimating()
         case .none:
             print("no internet")
@@ -274,10 +280,19 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
     }
     
     func getDetailFilmFromAPI(){
-        let urlString = "https://api.themoviedb.org/3/movie/\(id)?api_key=c9238e9fff997ddc12fc76e3904e2618&language=en-US"
-        APIManager.getDetailFilmFromAPI(urlString: urlString) { (filmDetails) in
-            self.filmDetails = filmDetails
-            self.displayData()
+//        let urlString = "https://api.themoviedb.org/3/movie/\(id)?api_key=c9238e9fff997ddc12fc76e3904e2618&language=en-US"
+//        APIManager.getDetailFilmFromAPI(urlString: urlString) { (filmDetails) in
+//            self.filmDetails = filmDetails
+//            self.displayData()
+//        }
+        firstly{
+            ApiProvider.shared.movieAPI.getMovieDetail(id: id)
+        }.get { (movie) in
+                self.filmDetails = movie
+        }.catch { (error) in
+            guard let error = error as? ApiError else {return}
+            
+            print(error.message)
         }
     }
     
@@ -288,9 +303,9 @@ class FilmDetailViewController: UIViewController, NVActivityIndicatorViewable {
         }
         lbLink.text = self.filmDetails.homepage
         // genre
-        if let genre = self.filmDetails.genres?.name{
-            lbGenre.text = genre
-        }
+//        if let genre = self.filmDetails.toGenres(){
+            lbGenre.text = self.filmDetails.toGenres()
+//        }
         // set image
         let linkImg = "https://image.tmdb.org/t/p/original\(self.filmDetails.poster_path ?? "" )"
         let url = URL(string: linkImg)

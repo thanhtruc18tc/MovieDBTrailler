@@ -68,10 +68,20 @@ PODS:
   - NVActivityIndicatorView (4.7.0):
     - NVActivityIndicatorView/Presenter (= 4.7.0)
   - NVActivityIndicatorView/Presenter (4.7.0)
+  - PromiseKit (6.11.0):
+    - PromiseKit/CorePromise (= 6.11.0)
+    - PromiseKit/Foundation (= 6.11.0)
+    - PromiseKit/UIKit (= 6.11.0)
+  - PromiseKit/CorePromise (6.11.0)
+  - PromiseKit/Foundation (6.11.0):
+    - PromiseKit/CorePromise
+  - PromiseKit/UIKit (6.11.0):
+    - PromiseKit/CorePromise
   - ReachabilitySwift (4.3.1)
   - SDWebImage (5.0.6):
     - SDWebImage/Core (= 5.0.6)
   - SDWebImage/Core (5.0.6)
+  - SwiftyJSON (5.0.0)
   - TinyConstraints (4.0.1)
   - YouTubePlayer (0.4.0)
 
@@ -85,13 +95,15 @@ DEPENDENCIES:
   - ImageSlideshow/SDWebImage
   - IQKeyboardManagerSwift
   - NVActivityIndicatorView
+  - PromiseKit
   - ReachabilitySwift
   - SDWebImage
+  - SwiftyJSON
   - TinyConstraints
   - YouTubePlayer
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - Cosmos
     - Firebase
@@ -110,6 +122,9 @@ SPEC REPOS:
     - SDWebImage
     - TinyConstraints
     - YouTubePlayer
+  trunk:
+    - PromiseKit
+    - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
@@ -126,11 +141,13 @@ SPEC CHECKSUMS:
   IQKeyboardManagerSwift: d2df660d0b8d64a15cb2537c9ff303213fa515b2
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   NVActivityIndicatorView: b19ddab2576f805cbe0fb2306cba3476e09a1dea
+  PromiseKit: e4863d06976e7dee5e41c04fc7371c16b3600292
   ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
   SDWebImage: 920f1a2ff1ca8296ad34f6e0510a1ef1d70ac965
+  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
   YouTubePlayer: 028451f6772f372d4759866db99824c676ac1473
 
-PODFILE CHECKSUM: d430fdcfd6e6b421a9c74930b1ad7e3cfb3e0f50
+PODFILE CHECKSUM: 3ce623e783a86cb2bc9ce75f5bd6f469295c1b44
 
-COCOAPODS: 1.7.4
+COCOAPODS: 1.8.4

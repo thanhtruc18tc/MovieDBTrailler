@@ -7,7 +7,7 @@
 //
 
 import Foundation
-class GenreEntity{
+class GenreEntity: Codable{
     var name : String?
     init(arrDic :[[String: Any]]) {
         var temp  = ""

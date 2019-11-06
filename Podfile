@@ -19,4 +19,6 @@ target 'Moviedb' do
   	pod 'GooglePlaces'
 	pod 'Firebase/Core'
 	pod 'ReachabilitySwift'
+	pod 'PromiseKit'
+	pod 'SwiftyJSON'
 end

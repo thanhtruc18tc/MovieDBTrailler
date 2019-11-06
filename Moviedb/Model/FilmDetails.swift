@@ -6,8 +6,10 @@
 //  Copyright © 2019 Truc Tran. All rights reserved.
 //
 
-import UIKit
-class FilmDetails {
+
+
+class FilmDetails: Codable {
+    
     var budget : Int?
     var revenue : Int?
     var homepage : String?
@@ -19,7 +21,8 @@ class FilmDetails {
     var runtime : Int?
     var vote_average :Double?
     // genre
-    var genres : GenreEntity?
+    var genres2 : GenreEntity?
+    var genres : [GenreEntity]?
     
     init(dic : [String:Any]) {
         if let budget = dic["budget"] as? Int{
@@ -52,9 +55,21 @@ class FilmDetails {
         if let vote_average = dic["vote_average"] as? Double{
             self.vote_average = vote_average
         }
-        if let genres = dic["genres"] as? [[String: Any]] {
-            self.genres = GenreEntity(arrDic: genres)
+        if let genres2 = dic["genres"] as? [[String: Any]] {
+            self.genres2 = GenreEntity(arrDic: genres2)
         }
     }
     
+    func toGenres() -> String {
+        var list = ""
+        for item in genres ?? [] {
+            var name = item.name
+            if !list.isEmpty {
+                list.append(" ,")
+            }
+            list.append(name ?? "")
+        }
+        return list
+    }
+        
 }

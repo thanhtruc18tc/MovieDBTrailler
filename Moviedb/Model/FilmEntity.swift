@@ -7,7 +7,8 @@
 //
 
 import Foundation
-class FilmEntity {
+class FilmEntity: Codable {
+    
     var vote_count : Int?
     var id : Int?
     var video : Bool?
@@ -21,6 +22,8 @@ class FilmEntity {
     var adult : Bool?
     var overview : String?
     var release_date : String?
+    
+    
     init(id : Int, title: String, release_date : String, poster_path : String, vote_average: Double ) {
         self.id = id
         self.title = title
